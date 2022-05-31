@@ -1,0 +1,5 @@
+react age calc
+
+- react context for calc
+- api - firebase
+- xxx dont use css framework xxx

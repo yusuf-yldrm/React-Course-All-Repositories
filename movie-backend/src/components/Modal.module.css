@@ -1,0 +1,7 @@
+.modal {
+    width: 100%;
+    text-align:center;
+    font-size: 2.5rem;
+    cursor: pointer;
+    background-color: white;
+}
