@@ -7,12 +7,19 @@ import { useEffect, useState } from 'react';
 const AvailableMeals = () => {
 
   const [meals, setMeals] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [DBError, setDBError] = useState(null)
 
   useEffect(() => {
+    setIsLoading(true)
     const fetchMeals = async () => {
       const response = await fetch('https://reactrefres-default-rtdb.europe-west1.firebasedatabase.app/meals.json') 
+      
+      if(!response.ok) {
+        throw new Error('Something went wrong !!!')
+      }
+      
       const data = await response.json()
-      console.log(data)
       const loadedMeals = []
 
       for(const key in data) {
@@ -24,14 +31,18 @@ const AvailableMeals = () => {
         })
       }
 
-      console.log(data)
       setMeals(loadedMeals)
+      setIsLoading(false)
     }
 
-    fetchMeals()
+    fetchMeals().catch(err => {
+      setIsLoading(false)
+      setDBError(err.message)
+    })
     
   }, [])
 
+  
 
   const mealsList = meals.map((meal) => (
     <MealItem
@@ -43,11 +54,30 @@ const AvailableMeals = () => {
     />
   ));
 
+ 
+
+  if(isLoading) {
+    return(
+        <section className={classes.MealsLoading}>
+          <h1>Loading..</h1>
+        </section> 
+    ) 
+  }
+
+  if(DBError) {
+    return(
+        <section className={classes.MealsError}>
+          <h1>{DBError}</h1>
+        </section> 
+    ) 
+  }
+
   return (
     <section className={classes.meals}>
-      <Card>
-        <ul>{mealsList}</ul>
-      </Card>
+       
+        <Card>
+           <ul>{mealsList}</ul>
+        </Card>
     </section>
   );
 };
